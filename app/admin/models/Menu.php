@@ -72,12 +72,19 @@ class Menu extends Model
 
     public $timestamps = true;
 
-    public function getMenuOptionsAttribute($value)
+    public function getMenuPriceFromAttribute()
     {
-        if (isset($this->relations['menu_options']))
-            return $this->relations['menu_options'];
+        if (!$this->menu_options)
+            return $this->menu_price;
 
-        return $this->relations['menu_options'] = $this->getOptions();
+        return $this->menu_options->mapWithKeys(function ($option) {
+            return $option->menu_option_values->keyBy('menu_option_value_id');
+        })->min('price') ?: 0;
+    }
+
+    public function getMinimumQtyAttribute($value)
+    {
+        return $value ?: 1;
     }
 
     //

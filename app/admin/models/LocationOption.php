@@ -26,14 +26,16 @@ class LocationOption extends Model
      */
     public $locationContext;
 
+    protected $itemsToSaveCache = [];
+
     protected static $cache = [];
 
     public static function onLocation($location = null)
     {
-        $self = new static;
-        $self->locationContext = $location ?: $self->resolveLocation();
+        $instance = new static;
+        $instance->locationContext = $location ?: $instance->resolveLocation();
 
-        return $self;
+        return $instance;
     }
 
     public static function findRecord($key, $location = null)
@@ -76,26 +78,22 @@ class LocationOption extends Model
 
     public function setAll($items)
     {
-        if (!$location = $this->locationContext)
+        if (!$this->locationContext)
             return false;
 
         if (!is_array($items))
             $items = [];
 
-        $records = $this->getAll();
+        $this->itemsToSaveCache = array_merge($this->itemsToSaveCache, $items);
 
-        collect($items)
-            ->filter(function ($value, $key) use ($records) {
-                return $value != array_get($records, $key);
-            })
-            ->map(function ($value, $key) use ($location) {
-                self::updateOrCreate([
-                    'location_id' => $location->location_id,
-                    'item' => $key,
-                ], ['value' => $value]);
+        if ($this->locationContext->exists) {
+            $this->updateOptions();
+        }
+        elseif ($this->itemsToSaveCache) {
+            $this->locationContext->bindEventOnce('model.afterSave', function () {
+                $this->updateOptions();
             });
-
-        static::$cache[$location->location_id] = $items;
+        }
 
         return true;
     }
@@ -172,5 +170,24 @@ class LocationOption extends Model
         }, $parts));
 
         return 'options'.$wrappedName;
+    }
+
+    protected function updateOptions()
+    {
+        if (!$location = $this->locationContext)
+            return false;
+
+        self::upsert(collect($this->itemsToSaveCache)
+            ->map(function ($value, $key) use ($location) {
+                return [
+                    'location_id' => $location->location_id,
+                    'item' => $key,
+                    'value' => json_encode($value),
+                ];
+            })->values()->all(), ['location_id', 'item'], ['value']);
+
+        unset(static::$cache[$location->location_id]);
+
+        return true;
     }
 }

@@ -74,7 +74,7 @@ class MenuOptionValue extends Model
 
     public function getStockableLocations()
     {
-        return $this->option->locations;
+        return optional($this->option)->locations;
     }
 
     //

@@ -11,7 +11,7 @@ class MailTemplate extends FormRequest
         return [
             'layout_id' => lang('system::lang.mail_templates.label_layout'),
             'label' => lang('admin::lang.label_description'),
-            'subject' => lang('system::lang.mail_templates.label_code'),
+            'subject' => lang('system::lang.mail_templates.label_subject'),
             'code' => lang('system::lang.mail_templates.label_code'),
         ];
     }
@@ -19,6 +19,7 @@ class MailTemplate extends FormRequest
     public function rules()
     {
         return [
+            'code' => ['sometimes', 'required', 'min:2', 'max:128', 'unique:mail_templates', 'regex:/^[a-z-_\.\:]+$/i'],
             'layout_id' => ['integer'],
             'code' => ['sometimes', 'required', 'min:2', 'max:32'],
             'label' => ['required', 'string'],

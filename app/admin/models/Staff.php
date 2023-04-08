@@ -104,7 +104,7 @@ class Staff extends Model
     public function scopeWhereNotSuperUser($query)
     {
         $query->whereHas('user', function ($q) {
-            $q->where('super_user', '!=', 1);
+            $q->where('super_user', '!=', 1)->orWhereNull('super_user');
         });
     }
 

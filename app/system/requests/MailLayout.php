@@ -20,11 +20,8 @@ class MailLayout extends FormRequest
     public function rules()
     {
         return [
-            'name' => ['required', 'string', 'between:2,32'],
-            'code' => ['required', 'alpha_dash'],
-            'layout' => ['string'],
-            'layout_css' => ['string'],
-            'plain_layout' => ['string'],
+            'name' => ['required', 'between:2,32'],
+            'code' => ['sometimes', 'required', 'regex:/^[a-z-_\.\:]+$/i', 'unique:mail_layouts'],
         ];
     }
 }

@@ -10,3 +10,4 @@ phpunit.dusk.xml
 /vendor
 composer.lock
 node_modules
+.history

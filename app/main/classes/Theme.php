@@ -87,7 +87,7 @@ class Theme
     public function __construct($path, array $config = [])
     {
         $this->path = realpath($path);
-        $this->publicPath = File::localToPublic($this->path);
+        $this->publicPath = File::localToPublic($path);
         $this->config = $config;
     }
 
@@ -130,7 +130,7 @@ class Theme
 
     public function getParentPath()
     {
-        return dirname($this->path).'/'.$this->parentName;
+        return ThemeManager::instance()->findPath($this->parentName);
     }
 
     public function getParentName()

@@ -1,4 +1,5 @@
 <?php
+
 $config['list']['filter'] = [
     'search' => [
         'prompt' => 'lang:admin::lang.orders.text_filter_search',
@@ -18,8 +19,8 @@ $config['list']['filter'] = [
         'location' => [
             'label' => 'lang:admin::lang.text_filter_location',
             'type' => 'selectlist',
-            'conditions' => 'location_id = :filtered',
-            'modelClass' => \Admin\Models\Location::class,
+            'scope' => 'whereHasLocation',
+            'modelClass' => 'Admin\Models\Locations_model',
             'nameFrom' => 'location_name',
             'locationAware' => true,
         ],
@@ -41,8 +42,8 @@ $config['list']['filter'] = [
         'payment' => [
             'label' => 'lang:admin::lang.orders.text_filter_payment',
             'type' => 'selectlist',
-            'conditions' => 'payment = :filtered',
-            'modelClass' => \Admin\Models\Payment::class,
+            'conditions' => 'payment IN(:filtered)',
+            'modelClass' => 'Admin\Models\Payments_model',
             'options' => 'getDropdownOptions',
         ],
         'date' => [
@@ -63,6 +64,7 @@ $config['list']['bulkActions'] = [
         'label' => 'lang:admin::lang.button_delete',
         'class' => 'btn btn-light text-danger',
         'data-request-confirm' => 'lang:admin::lang.alert_warning_confirm',
+        'permissions' => 'Admin.DeleteOrders',
     ],
 ];
 

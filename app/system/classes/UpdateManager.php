@@ -237,7 +237,7 @@ class UpdateManager
 
         $this->log("<info>Migrating extension $name</info>");
 
-        $path = $this->getMigrationPath($this->extensionManager->getNamePath($name));
+        $path = $this->getMigrationPath($name);
         $this->migrator->run([$name => $path]);
 
         $this->log("<info>Migrated extension $name</info>");
@@ -253,7 +253,7 @@ class UpdateManager
             return false;
         }
 
-        $path = $this->getMigrationPath($this->extensionManager->getNamePath($name));
+        $path = $this->getMigrationPath($name);
         $this->migrator->rollbackAll([$name => $path]);
 
         $this->log("<info>Purged extension $name</info>");
@@ -269,7 +269,7 @@ class UpdateManager
             return false;
         }
 
-        $path = $this->getMigrationPath($this->extensionManager->getNamePath($name));
+        $path = $this->getMigrationPath($name);
         $this->migrator->rollbackAll([$name => $path], $options);
 
         $this->log("<info>Rolled back extension $name</info>");
@@ -289,7 +289,7 @@ class UpdateManager
         if (in_array($name, Config::get('system.modules', [])))
             return app_path(strtolower($name).'/database/migrations');
 
-        return extension_path($name.'/database/migrations');
+        return $this->extensionManager->getExtensionPath($name, '/database/migrations');
     }
 
     //
@@ -379,7 +379,6 @@ class UpdateManager
         $installedItems = collect($installedItems)->keyBy('name')->all();
 
         $updateCount = 0;
-        $hasCoreUpdate = false;
         foreach (array_get($updates, 'data', []) as $update) {
             $updateCount++;
             $update['installedVer'] = array_get(array_get($installedItems, $update['code'], []), 'ver');
@@ -391,11 +390,9 @@ class UpdateManager
                 $update['installedVer'] = params('ti_version');
                 if ($this->disableCoreUpdates)
                     continue;
-
-                $hasCoreUpdate = true;
             }
             else {
-                if ($hasCoreUpdate || $this->isMarkedAsIgnored($update['code'])) {
+                if ($this->isMarkedAsIgnored($update['code'])) {
                     $ignoredItems[] = $update;
                     continue;
                 }

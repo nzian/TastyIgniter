@@ -6,22 +6,9 @@ use Admin\Models\Menu_item_option_values_model;
 use Admin\Models\Menu_options_model;
 use Admin\Models\Menus_model;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Event;
 
 trait ManagesOrderItems
 {
-    public static function bootManagesOrderItems()
-    {
-        Event::listen('admin.order.beforePaymentProcessed', function (self $model) {
-            $model->handleOnBeforePaymentProcessed();
-        });
-    }
-
-    protected function handleOnBeforePaymentProcessed()
-    {
-        $this->subtractStock();
-    }
-
     /**
      * Subtract cart item quantity from menu stock quantity
      *
@@ -221,7 +208,7 @@ trait ManagesOrderItems
             ->where('is_summable', true)
             ->sum('value');
 
-        $orderTotal = $subtotal + $total;
+        $orderTotal = max(0, $subtotal + $total);
 
         $totalItems = $this->orderMenusQuery()
             ->where('order_id', $this->getKey())

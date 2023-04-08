@@ -41,7 +41,8 @@ class MenuOption extends Model
             'menu_option_values' => [\Admin\Models\MenuItemOptionValue::class, 'foreignKey' => 'option_id', 'delete' => TRUE],
         ],
         'morphToMany' => [
-            'locations' => [\Admin\Models\Location::class, 'name' => 'locationable'],
+            'allergens' => ['Admin\Models\Allergens_model', 'name' => 'allergenable'],
+            'locations' => ['Admin\Models\Locations_model', 'name' => 'locationable'],
         ],
     ];
 
@@ -56,7 +57,7 @@ class MenuOption extends Model
         if (!is_null($ids = AdminLocation::getIdOrAll()))
             $query->whereHasLocation($ids);
 
-        return $query->dropdown('display_name');
+        return $query->orderBy('option_name')->dropdown('display_name');
     }
 
     public static function getDisplayTypeOptions()
@@ -86,6 +87,7 @@ class MenuOption extends Model
 
     protected function beforeDelete()
     {
+        $this->allergens()->detach();
         $this->locations()->detach();
     }
 

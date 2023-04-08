@@ -1,4 +1,5 @@
 <?php
+
 $config['list']['filter'] = [
     'search' => [
         'prompt' => 'lang:admin::lang.staff.text_filter_search',
@@ -15,9 +16,9 @@ $config['list']['filter'] = [
         ],
         'role' => [
             'label' => 'lang:admin::lang.staff.text_filter_role',
-            'type' => 'select',
-            'conditions' => 'user_role_id = :filtered',
-            'modelClass' => \Admin\Models\UserRole::class,
+            'type' => 'selectlist',
+            'conditions' => 'staff_role_id in (:filtered)',
+            'modelClass' => 'Admin\Models\Staff_roles_model',
         ],
         'status' => [
             'label' => 'lang:admin::lang.text_filter_status',

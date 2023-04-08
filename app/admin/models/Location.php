@@ -40,8 +40,9 @@ class Location extends AbstractLocation
 
     public $relation = [
         'hasMany' => [
-            'working_hours' => [\Admin\Models\WorkingHour::class, 'delete' => TRUE],
-            'delivery_areas' => [\Admin\Models\LocationArea::class, 'delete' => TRUE],
+            'all_options' => ['Admin\Models\LocationOption', 'delete' => true],
+            'working_hours' => ['Admin\Models\Working_hours_model', 'delete' => true],
+            'delivery_areas' => ['Admin\Models\Location_areas_model', 'delete' => true],
         ],
         'belongsTo' => [
             'country' => [\System\Models\Country::class, 'otherKey' => 'country_id', 'foreignKey' => 'location_country_id'],
@@ -141,8 +142,6 @@ class Location extends AbstractLocation
             'latitude' => null,
             'longitude' => null,
             'paginate' => true,
-            'hasDelivery' => null,
-            'hasCollection' => null,
         ], $options));
 
         if ($latitude && $longitude) {
@@ -178,12 +177,6 @@ class Location extends AbstractLocation
 
         if (!is_null($enabled))
             $query->where('location_status', $enabled);
-
-        if (!is_null($hasDelivery))
-            $query->where('options->offer_delivery', $hasDelivery);
-
-        if (!is_null($hasCollection))
-            $query->where('options->offer_collection', $hasCollection);
 
         $this->fireEvent('model.extendListFrontEndQuery', [$query]);
 

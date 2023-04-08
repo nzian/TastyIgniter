@@ -213,20 +213,15 @@ return [
         'text_partials' => 'Partials',
         'text_empty' => 'There are no mail templates available.',
         'text_variables' => 'Variables',
-        'text_registration' => 'Registration email to customer',
-        'text_password_reset_request' => 'Password reset request email to customer',
         'text_password_reset_request_alert' => 'Password reset request email to admin',
-        'text_password_reset' => 'Password reset email to customer',
         'text_password_reset_alert' => 'Password reset email to admin',
-        'text_order' => 'Order email to customer',
-        'text_reservation' => 'Reservation email to customer',
         'text_internal' => 'Internal Message',
         'text_contact' => 'Contact email to admin',
-        'text_registration_alert' => 'Registration alert email to admin',
-        'text_order_alert' => 'Order alert email to admin',
-        'text_reservation_alert' => 'Reservation alert to admin',
         'text_order_update' => 'Order status update email to customer',
         'text_reservation_update' => 'Reservation status update email to customer',
+        'text_invite' => 'Invite email to staff to access the TastyIgniter Admin',
+        'text_invite_customer' => 'Invite email to customer to place an order',
+        'text_low_stock_alert' => 'Low stock alert email to location',
 
         'button_test_message' => 'Send test message',
 
@@ -287,6 +282,7 @@ return [
         'text_invoice_date' => 'Customer telephone address',
         'text_order_menus' => 'Array of order menu items',
         'text_order_comment' => 'Order comment',
+        'text_location_logo' => 'Location logo',
         'text_location_name' => 'Location name',
         'text_location_email' => 'Location email',
         'text_location_address' => 'Location address',
@@ -314,6 +310,12 @@ return [
 
         'text_status_name' => 'Status name',
         'text_status_comment' => 'Status comment',
+
+        'text_group_stock' => 'Stock variables',
+        'text_stock_name' => 'Stock name',
+        'text_stock_quantity' => 'Stock quantity',
+        'text_low_stock_threshold' => 'Low stock threshold',
+        'text_stock_object' => 'Stock model object',
 
         'text_group_contact' => 'Contact variables',
         'text_full_name' => 'Contact full name',
@@ -401,7 +403,7 @@ return [
         'text_log_file' => 'Log file',
         'text_mailgun' => 'Mailgun',
         'text_postmark' => 'Postmark (Requires the Third-Party Drivers Extension)',
-        'text_ses' => 'SES',
+        'text_ses' => 'SES (Requires the Third-Party Drivers Extension)',
         'text_mail_no_encryption' => 'No encryption',
         'text_mail_tls_encryption' => 'TLS',
         'text_mail_ssl_encryption' => 'SSL',
@@ -637,7 +639,7 @@ return [
         'text_update_ignored' => '%s update(s) ignored',
         'text_item_update_summary' => 'Update from version %s to <b>%s</b>',
 
-        'text_core_update' => '<i class="fa fa-exclamation-triangle fa-fw"></i>&nbsp;&nbsp;After the core has been updated, other updates will be available.',
+        'text_core_update' => '<i class="fa fa-exclamation-triangle fa-fw"></i>&nbsp;&nbsp;After the core update has been installed, all extension updates will be installed.',
 
         'progress_download' => '<i class="fa fa-cloud-download fa-fw"></i>&nbsp;&nbsp;&nbsp;Downloading %s&#8230;',
         'progress_extract' => '<i class="fa fa-file-archive-o fa-fw"></i>&nbsp;&nbsp;&nbsp;Extracting %s&#8230;',

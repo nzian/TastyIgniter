@@ -3,8 +3,10 @@
 namespace Admin\Traits;
 
 use Admin\Facades\AdminAuth;
-use Admin\Models\AssignableLog;
-use Admin\Models\UserGroup;
+
+use Admin\Models\Assignable_logs_model;
+use Admin\Models\Staff_groups_model;
+use Admin\Models\Staffs_model;
 use Illuminate\Database\Eloquent\Builder;
 
 trait Assignable
@@ -63,23 +65,29 @@ trait Assignable
         return $this->updateAssignTo($group);
     }
 
-    public function updateAssignTo($group = null, $assignee = null)
+    public function updateAssignTo(Staff_groups_model $group = null, Staffs_model $assignee = null)
     {
         if (is_null($group))
             $group = $this->assignee_group;
 
-        $this->assignee_group()->associate($group);
+        if (is_null($group) && !is_null($assignee))
+            $group = $assignee->groups()->first();
+
+        $oldGroup = $this->assignee_group;
+        !is_null($group)
+            ? $this->assignee_group()->associate($group)
+            : $this->assignee_group()->dissociate();
 
         $oldAssignee = $this->assignee;
-        if (!is_null($assignee))
-            $this->assignee()->associate($assignee);
+        !is_null($assignee)
+            ? $this->assignee()->associate($assignee)
+            : $this->assignee()->dissociate();
 
-        $this->fireSystemEvent('admin.assignable.beforeAssignTo', [$group, $assignee, $oldAssignee]);
+        $this->fireSystemEvent('admin.assignable.beforeAssignTo', [$group, $assignee, $oldAssignee, $oldGroup]);
 
         $this->save();
 
-        if (!$log = AssignableLog::createLog($this))
-            return false;
+        $log = Assignable_logs_model::createLog($this);
 
         $this->fireSystemEvent('admin.assignable.assigned', [$log]);
 

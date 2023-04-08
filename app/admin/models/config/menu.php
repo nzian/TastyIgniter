@@ -1,4 +1,5 @@
 <?php
+
 $config['list']['filter'] = [
     'search' => [
         'prompt' => 'lang:admin::lang.menus.text_filter_search',
@@ -94,7 +95,7 @@ $config['list']['columns'] = [
         'relation' => 'categories',
         'select' => 'name',
     ],
-    'locations' => [
+    'location_name' => [
         'label' => 'lang:admin::lang.column_location',
         'type' => 'text',
         'relation' => 'locations',
@@ -257,6 +258,26 @@ $config['form']['tabs'] = [
             'useAttachment' => true,
         ],
 
+        '_options' => [
+            'label' => 'lang:admin::lang.menus.label_option',
+            'tab' => 'lang:admin::lang.menus.text_tab_menu_option',
+            'type' => 'recordeditor',
+            'context' => ['edit', 'preview'],
+            'form' => 'menu_options_model',
+            'modelClass' => 'Admin\Models\Menu_options_model',
+            'placeholder' => 'lang:admin::lang.menus.help_menu_option',
+            'formName' => 'lang:admin::lang.menu_options.text_option',
+            'popupSize' => 'modal-xl',
+            'addonRight' => [
+                'label' => '<i class="fa fa-long-arrow-down"></i> Add to Menu',
+                'tag' => 'button',
+                'attributes' => [
+                    'class' => 'btn btn-default',
+                    'data-control' => 'choose-record',
+                    'data-request' => 'onChooseMenuOption',
+                ],
+            ],
+        ],
         'menu_options' => [
             'label' => 'lang:admin::lang.menus.label_menu_option',
             'tab' => 'lang:admin::lang.menus.text_tab_menu_option',

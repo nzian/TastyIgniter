@@ -43,11 +43,6 @@ trait CombinesAssets
      */
     public $useCache = false;
 
-    /**
-     * @var bool Compress (minify) asset files.
-     */
-    public $useMinify = false;
-
     protected $assetsCombinerUri;
 
     protected function initCombiner()
@@ -55,26 +50,20 @@ trait CombinesAssets
         $this->cacheKeyPrefix = 'ti.combiner.';
         $this->useCache = config('system.enableAssetCache', true);
         $this->useMinify = config('system.enableAssetMinify', null);
+        $this->combineAssets = config('system.enableAssetCombiner', !config('app.debug', false));
         $this->storagePath = storage_path('system/combiner/data');
         $this->assetsCombinerUri = config('system.assetsCombinerUri', '/_assets');
 
         if (app()->runningInAdmin())
             $this->assetsCombinerUri = config('system.adminUri', '/admin').$this->assetsCombinerUri;
 
-        if ($this->useMinify === null)
-            $this->useMinify = !config('app.debug', false);
-
+        $this->registerFilter('js', new \Igniter\Flame\Assetic\Filter\JSScopeFilter);
         $this->registerFilter('css', new \Igniter\Flame\Assetic\Filter\CssImportFilter);
         $this->registerFilter(['css', 'scss'], new \Igniter\Flame\Assetic\Filter\CssRewriteFilter);
 
         $scssPhpFilter = new \Igniter\Flame\Assetic\Filter\ScssphpFilter;
         $scssPhpFilter->addImportPath(base_path());
         $this->registerFilter('scss', $scssPhpFilter);
-
-        if ($this->useMinify) {
-            $this->registerFilter('js', new \Igniter\Flame\Assetic\Filter\JSMinFilter);
-            $this->registerFilter(['css', 'scss'], new \Igniter\Flame\Assetic\Filter\StylesheetMinify);
-        }
     }
 
     /**
@@ -186,7 +175,7 @@ trait CombinesAssets
             return $this->getAssetPath($path);
         }, $assets);
 
-        return $assets;
+        return array_filter($assets);
     }
 
     protected function prepareCombiner(array $assets, $targetPath = null)
@@ -209,9 +198,13 @@ trait CombinesAssets
             if (!file_exists($path))
                 continue;
 
+            $source = str_starts_with($path, public_path())
+                ? public_path()
+                : dirname($path);
+
             $asset = starts_with($path, ['//', 'http://', 'https://'])
                 ? new HttpAsset($path, $filters)
-                : new FileAsset($path, $filters, base_path());
+                : new FileAsset($path, $filters, public_path());
 
             $files[] = $asset;
         }
